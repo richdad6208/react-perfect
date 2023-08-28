@@ -1,24 +1,28 @@
 import styled from "styled-components";
 
-interface ContainerProps {
-  bgColor: string;
-}
-
-const Container = styled.div<ContainerProps>`
+const Container = styled.div<ContainerDivProps>`
   width: 200px;
   height: 200px;
   background-color: ${(props) => props.bgColor};
+  border-width: 10px;
+  border-style: solid;
+  border-color: ${(props) => props.borderColor};
 `;
-
-function Child({ bgColor }: ContainerProps) {
-  return <Container bgColor={bgColor} />;
+interface ContainerDivProps {
+  bgColor: string;
+  borderColor: string;
 }
-interface playerProps {
-  name: string;
-  age: string;
+interface ContainerProps {
+  bgColor: string;
+  borderColor?: string;
 }
-const person = (player: playerProps) =>
-  console.log(`hellow ${player.name}! you are ${player.age}years old`);
 
-person({ name: "jeasung", age: "23" });
+function Child({ bgColor, borderColor = "red" }: ContainerProps) {
+  return (
+    <>
+      <Container bgColor={bgColor} borderColor={borderColor ?? "black"} />;
+    </>
+  );
+}
+
 export default Child;
