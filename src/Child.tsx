@@ -1,23 +1,24 @@
 import styled from "styled-components";
 
-const Container = styled.div<ChildProps>`
-  width: 200px;
-  height: 200px;
-  background: ${(props) => props.bgColor};
-`;
-
-interface ChildProps {
+interface ContainerProps {
   bgColor: string;
 }
-function Child({ bgColor }: ChildProps) {
+
+const Container = styled.div<ContainerProps>`
+  width: 200px;
+  height: 200px;
+  background-color: ${(props) => props.bgColor};
+`;
+
+function Child({ bgColor }: ContainerProps) {
   return <Container bgColor={bgColor} />;
 }
-
-interface person {
+interface playerProps {
   name: string;
-  age: number;
+  age: string;
 }
+const person = (player: playerProps) =>
+  console.log(`hellow ${player.name}! you are ${player.age}years old`);
 
-console.log(player.name);
-
+person({ name: "jeasung", age: "23" });
 export default Child;
