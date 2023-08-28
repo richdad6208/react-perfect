@@ -1,26 +1,23 @@
 import styled from "styled-components";
+import react from "react";
 
-const Container = styled.div<ContainerDivProps>`
-  width: 200px;
-  height: 200px;
-  background-color: ${(props) => props.bgColor};
-  border-width: 10px;
-  border-style: solid;
-  border-color: ${(props) => props.borderColor};
+const Container = styled.div`
+  background: ${(props) => props.theme.bgColor};
 `;
-interface ContainerDivProps {
-  bgColor: string;
-  borderColor: string;
-}
-interface ContainerProps {
-  bgColor: string;
-  borderColor?: string;
-}
+const P = styled.p`
+  color: ${(props) => props.theme.textColor};
+`;
+const Button = styled.button`
+  background: ${(props) => props.theme.bgColor};
+`;
 
-function Child({ bgColor, borderColor = "red" }: ContainerProps) {
+function Child() {
   return (
     <>
-      <Container bgColor={bgColor} borderColor={borderColor ?? "black"} />;
+      <Container>
+        <P> 일단 동작하게 만들어라</P>
+        <Button></Button>
+      </Container>
     </>
   );
 }
