@@ -1,11 +1,17 @@
-import { Outlet } from "react-router-dom";
-import Header from "./component/Header";
+import { createGlobalStyle } from "styled-components";
+import Coins from "./screen/Coins";
+
+const GlobalStyle = createGlobalStyle`
+body {
+  background: gray; 
+}
+`;
 
 function Root() {
   return (
     <>
-      <Header />
-      <Outlet />
+      <GlobalStyle />
+      <Coins />
     </>
   );
 }
