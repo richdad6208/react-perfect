@@ -4,7 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import Router from "./Router";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
