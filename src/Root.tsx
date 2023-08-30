@@ -40,6 +40,8 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+  color: inherit;
+  text-decoration: inherit;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -68,10 +70,6 @@ table {
   box-sizing: border-box; 
 }
 
-:root {
-  --max-width: 1200px;
-  --padding: 1rem;
-}
 
 body {
   font-family: 'Pretendard-Regular';
