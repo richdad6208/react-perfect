@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
+import { useQuery } from "react-query";
+import { getAllCoins } from "../api";
 
 const Container = styled.div`
   width: min(1200px, 100% - 2em);
@@ -53,17 +55,23 @@ interface coinsInterface {
 }
 
 function Coins() {
-  const [coins, setCoins] = useState<coinsInterface[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const data = await response.json();
-      console.log(data);
-      setCoins(data.slice(0, 5));
-      setLoading(false);
-    })();
-  }, []);
+  const { isLoading, data } = useQuery({
+    queryKey: ["allCoins"],
+    queryFn: getAllCoins,
+    select: (data) => data.toString(),
+  });
+  // const [coins, setCoins] = useState<coinsInterface[]>([]);
+  // const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   (async () => {
+  //     const response = await fetch("https://api.coinpaprika.com/v1/coins");
+  //     const data = await response.json();
+  //     console.log(data);
+  //     setCoins(data.slice(0, 5));
+  //     setLoading(false);
+  //   })();
+  // }, []);
+
   return (
     <Container>
       <Header>

@@ -1,4 +1,10 @@
-import { useLocation, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useMatch,
+  useParams,
+} from "react-router-dom";
 import { styled } from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
 import { useState, useEffect } from "react";
@@ -8,7 +14,7 @@ const Container = styled.div`
   margin-inline: auto;
 `;
 const Header = styled.header`
-  padding-block: 3rem;
+  padding-block: 2rem;
   h1 {
     font-size: 50px;
     color: ${(props) => props.theme.accentColor};
@@ -27,7 +33,7 @@ const CoinWrapper = styled.div`
   width: min(1000px, 95%);
   margin-inline: auto;
   border-radius: 20px;
-  padding-block: 2em;
+  padding-block: 1em;
 `;
 const Overview = styled.div`
   width: min(600px, 90%);
@@ -52,11 +58,27 @@ const OverviewItem = styled.div`
 `;
 const Description = styled.div`
   width: min(600px, 90%);
-  padding-block: 4em;
+  padding-block: 2em;
   font-size: 27px;
   line-height: 1.3;
 `;
 
+const Tabs = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+`;
+const Tab = styled.div<{ isActive: boolean }>`
+  a {
+    display: block;
+    padding: 1em 3em;
+    background: #455a64;
+    border-radius: 20px;
+    color: ${(props) =>
+      props.isActive ? props.theme.accentColor : props.theme.textColor};
+  }
+`;
 interface Tags {
   id: string;
   name: string;
@@ -126,16 +148,14 @@ interface IPriceInfo {
     };
   };
 }
-
 function Coin() {
   const [loading, setLoading] = useState(true);
   const [coinInfo, setCoinInfo] = useState<ICoinInfo>();
   const [priceInfo, setpriceInfo] = useState<IPriceInfo>();
-  const {
-    state: { name },
-  } = useLocation();
+  const { state } = useLocation();
   const { coinId } = useParams();
-
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
   useEffect(() => {
     (async () => {
       const coinData = await (
@@ -153,12 +173,12 @@ function Coin() {
       setpriceInfo(priceData);
       setLoading(false);
     })();
-  }, []);
+  }, [coinId]);
 
   return (
     <Container>
       <Header>
-        <h1>{name || coinInfo?.name}</h1>
+        <h1>{state?.name ? state.name : loading ? loading : coinInfo?.name}</h1>
       </Header>
       <CoinSection>
         {loading ? (
@@ -196,6 +216,15 @@ function Coin() {
           </CoinWrapper>
         )}
       </CoinSection>
+      <Tabs>
+        <Tab isActive={priceMatch !== null}>
+          <Link to={`/${coinId}/price`}>Price</Link>
+        </Tab>
+        <Tab isActive={chartMatch !== null}>
+          <Link to={`/${coinId}/chart`}>Chart</Link>
+        </Tab>
+      </Tabs>
+      <Outlet />
     </Container>
   );
 }
