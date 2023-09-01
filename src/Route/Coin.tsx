@@ -7,7 +7,8 @@ import {
 } from "react-router-dom";
 import { styled } from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
-import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { getCoin, getTickers } from "../api";
 
 const Container = styled.div`
   width: min(1200px, 100% - 2em);
@@ -148,37 +149,54 @@ interface IPriceInfo {
     };
   };
 }
+
+interface RouteParams {
+  coinId: string;
+}
+interface Location {
+  state: string;
+  name: string;
+}
+
 function Coin() {
-  const [loading, setLoading] = useState(true);
-  const [coinInfo, setCoinInfo] = useState<ICoinInfo>();
-  const [priceInfo, setpriceInfo] = useState<IPriceInfo>();
-  const { state } = useLocation();
-  const { coinId } = useParams();
+  const location = useLocation();
+  const state = location.state as Location;
+  const { coinId } = useParams<keyof RouteParams>() as RouteParams;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
-  useEffect(() => {
-    (async () => {
-      const coinData = await (
-        await fetch(
-          `https://api.coinpaprika.com/v1/coins/${coinId?.toLowerCase()}`
-        )
-      ).json();
+  const { isLoading: infoLoading, data: infoData } = useQuery<ICoinInfo[]>(
+    ["CoinInfo", coinId],
+    () => getCoin(coinId)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<
+    IPriceInfo[]
+  >(["CoinInfo", coinId], () => getTickers(coinId));
+  // const [loading, setLoading] = useState(true);
+  // const [coinInfo, setCoinInfo] = useState<ICoinInfo>();
+  // const [priceInfo, setpriceInfo] = useState<IPriceInfo>();
+  // useEffect(() => {
+  //   (async () => {
+  //     const coinData = await (
+  //       await fetch(
+  //         `https://api.coinpaprika.com/v1/coins/${coinId?.toLowerCase()}`
+  //       )
+  //     ).json();
 
-      const priceData = await (
-        await fetch(
-          `https://api.coinpaprika.com/v1/tickers/${coinId?.toLowerCase()}`
-        )
-      ).json();
-      setCoinInfo(coinData);
-      setpriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
-
+  //     const priceData = await (
+  //       await fetch(
+  //         `https://api.coinpaprika.com/v1/tickers/${coinId?.toLowerCase()}`
+  //       )
+  //     ).json();
+  //     setCoinInfo(coinData);
+  //     setpriceInfo(priceData);
+  //     setLoading(false);
+  //   })();
+  // }, [coinId]);
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
       <Header>
-        <h1>{state?.name ? state.name : loading ? loading : coinInfo?.name}</h1>
+        <h1>{state?.name ? state.name : loading ? loading : infoData?.name}</h1>
       </Header>
       <CoinSection>
         {loading ? (
@@ -190,27 +208,27 @@ function Coin() {
             <Overview>
               <OverviewItem>
                 <span>RANK:</span>
-                <span>{coinInfo?.rank}</span>
+                <span>{infoData?.rank}</span>
               </OverviewItem>
               <OverviewItem>
                 <span>SYMBOL:</span>
-                <span>{coinInfo?.symbol}</span>
+                <span>{infoData?.symbol}</span>
               </OverviewItem>
 
               <OverviewItem>
                 <span>OPEN SOURCE:</span>
-                <span>{coinInfo?.open_source ? "YES" : "NO"}</span>
+                <span>{infoData?.open_source ? "YES" : "NO"}</span>
               </OverviewItem>
             </Overview>
-            <Description>{coinInfo?.description}</Description>
+            <Description>{infoData?.description}</Description>
             <Overview>
               <OverviewItem>
                 <span>TOTAL SUPPLY:</span>
-                <span>{priceInfo?.total_supply.toLocaleString()}</span>
+                <span>{tickersData?.total_supply.toLocaleString()}</span>
               </OverviewItem>
               <OverviewItem>
                 <span>MAX SUPPLY:</span>
-                <span>{priceInfo?.max_supply.toLocaleString()}</span>
+                <span>{tickersData?.max_supply.toLocaleString()}</span>
               </OverviewItem>
             </Overview>
           </CoinWrapper>
