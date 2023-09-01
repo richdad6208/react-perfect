@@ -44,7 +44,7 @@ const Coin = styled.div`
   }
 `;
 
-interface coinsInterface {
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -55,11 +55,7 @@ interface coinsInterface {
 }
 
 function Coins() {
-  const { isLoading, data } = useQuery({
-    queryKey: ["allCoins"],
-    queryFn: getAllCoins,
-    select: (data) => data.toString(),
-  });
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", getAllCoins);
   // const [coins, setCoins] = useState<coinsInterface[]>([]);
   // const [loading, setLoading] = useState(true);
   // useEffect(() => {
@@ -78,12 +74,12 @@ function Coins() {
         <h1>COIN</h1>
       </Header>
       <CoinList>
-        {loading ? (
+        {isLoading ? (
           <div style={{ textAlign: "center" }}>
             <Spinner animation="border" variant="primary" />
           </div>
         ) : (
-          coins.map((coin, idx) => {
+          data?.slice(0, 10).map((coin, idx) => {
             return (
               <Coin key={idx}>
                 <Link to={`/${coin.id}`} state={{ name: coin.name }}>
